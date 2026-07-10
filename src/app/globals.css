@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper text-ink font-body antialiased;
+    font-feature-settings: "ss01", "cv05";
+  }
+
+  ::selection {
+    @apply bg-clayWash text-clayDeep;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-ink;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  /* One consistent measure for horizontal page rhythm */
+  .frame {
+    @apply mx-auto w-full max-w-[76rem] px-6 sm:px-8;
+  }
+
+  /* Overline / eyebrow label — the signature small-caps clay tag */
+  .overline {
+    @apply inline-flex items-center gap-2 font-body text-[0.68rem] font-semibold uppercase tracking-label text-clayDeep;
+  }
+
+  /* Buttons — one filled (clay), one outline. Soft organic radius. */
+  .btn-clay {
+    @apply inline-flex items-center justify-center gap-2 rounded-pillish bg-clay px-6 py-3 font-body text-sm font-semibold text-shell shadow-soft transition-all duration-200 hover:bg-clayDeep hover:shadow-lift focus:outline-none focus-visible:ring-2 focus-visible:ring-clayDeep focus-visible:ring-offset-2 focus-visible:ring-offset-paper;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-pillish border border-ink/25 px-6 py-3 font-body text-sm font-semibold text-ink transition-all duration-200 hover:border-ink hover:bg-ink hover:text-shell focus:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper;
+  }
+
+  /* Paper card — the single card personality */
+  .paper-card {
+    @apply rounded-panel border border-line bg-shell p-6 shadow-soft;
+  }
+
+  /* Form field */
+  .field-label {
+    @apply mb-1.5 block font-body text-sm font-medium text-inkSoft;
+  }
+
+  .field-input {
+    @apply w-full rounded-note border border-line bg-paper px-4 py-3 font-body text-[0.95rem] text-ink placeholder:text-muted/70 transition focus:border-clay focus:bg-shell focus:outline-none focus:ring-2 focus:ring-clayWash;
+  }
+
+  /* Section label used across the site */
+  .section-title {
+    @apply font-display text-3xl leading-tight text-ink sm:text-4xl;
+  }
+}
