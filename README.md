@@ -1,7 +1,7 @@
 # BB Medical
 
 Marketing site + lightweight content console for a family-run medical-equipment
-supplier. Warm-organic design, statically served, backed by Supabase.
+supplier. Clean, clinical design, statically served, backed by Supabase.
 
 ## What's inside
 

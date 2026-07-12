@@ -45,6 +45,7 @@ export function Inbox() {
   const [source, setSource] = useState<Source["key"]>("inquiries");
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [filter, setFilter] = useState<Status | "all">("all");
 
   const load = useCallback(async () => {
@@ -54,12 +55,26 @@ export function Inbox() {
       setLoading(false);
       return;
     }
-    const { data } = await client
-      .from(source)
-      .select("*")
-      .order("created_at", { ascending: false });
-    setRows((data as Row[]) ?? []);
-    setLoading(false);
+    try {
+      const { data, error } = await client
+        .from(source)
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) {
+        setLoadError(error.message);
+        setRows([]);
+        return;
+      }
+      setRows((data as Row[]) ?? []);
+      setLoadError("");
+    } catch (err) {
+      setLoadError(
+        err instanceof Error ? err.message : "Could not reach Supabase.",
+      );
+      setRows([]);
+    } finally {
+      setLoading(false);
+    }
   }, [source]);
 
   useEffect(() => {
@@ -121,6 +136,14 @@ export function Inbox() {
           />
         ))}
       </div>
+
+      {loadError && !loading && (
+        <div className="mt-4 rounded-note border border-clay/40 bg-clayWash/50 p-4 font-body text-sm text-clayDeep">
+          Couldn&apos;t load submissions: {loadError}. Check your Supabase keys
+          and that <code className="font-mono text-xs">SETUP.sql</code> has been
+          run.
+        </div>
+      )}
 
       {loading ? (
         <div className="flex items-center gap-2 py-12 font-body text-sm text-muted">

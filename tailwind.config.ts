@@ -5,19 +5,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Warm-Organic system — paper base, clay signature accent, espresso ink
-        paper: "#F6F1E8",
-        paperDeep: "#EFE7D8",
-        shell: "#FCF9F3",
-        ink: "#2A2320",
-        inkSoft: "#54483F",
-        muted: "#8A7B6D",
-        line: "#E3D8C6",
-        clay: "#B85C38",
-        clayDeep: "#8F4223",
-        clayWash: "#F0DBCE",
-        sage: "#6E7A5E",
-        sageWash: "#DEE3D3",
+        // Clean-White system — cool near-white base, emerald signature accent,
+        // slate secondary, ink text. (Token names kept stable across the app.)
+        paper: "#F6F8FA", // page background
+        paperDeep: "#EDF1F5", // alternating section background
+        shell: "#FFFFFF", // cards / surfaces
+        ink: "#14171C",
+        inkSoft: "#3D434E",
+        muted: "#6B7280",
+        line: "#E4E8EE",
+        clay: "#157F5B", // signature accent (emerald)
+        clayDeep: "#0E5C42",
+        clayWash: "#E4F2EB",
+        sage: "#475569", // secondary (slate)
+        sageWash: "#EDF1F6",
       },
       fontFamily: {
         display: ["var(--font-display)", "Georgia", "serif"],
@@ -30,8 +31,8 @@ const config: Config = {
         pillish: "2rem",
       },
       boxShadow: {
-        lift: "0 18px 40px -24px rgba(42, 35, 32, 0.35)",
-        soft: "0 8px 24px -16px rgba(42, 35, 32, 0.30)",
+        lift: "0 18px 44px -26px rgba(16, 24, 40, 0.28)",
+        soft: "0 6px 20px -14px rgba(16, 24, 40, 0.20)",
       },
       letterSpacing: {
         label: "0.18em",

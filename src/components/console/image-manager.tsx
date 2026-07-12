@@ -13,6 +13,7 @@ export function ImageManager() {
   const { refresh } = useAssets();
   const [paths, setPaths] = useState<PathMap>({});
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const load = useCallback(async () => {
     const client = getClient();
@@ -20,18 +21,30 @@ export function ImageManager() {
       setLoading(false);
       return;
     }
-    const { data } = await client
-      .from("site_settings")
-      .select("key,value")
-      .like("key", "image:%");
-    const next: PathMap = {};
-    for (const row of data ?? []) {
-      const key = String(row.key);
-      const val = String(row.value ?? "");
-      if (key.startsWith("image:") && val) next[key.slice(6)] = val;
+    try {
+      const { data, error } = await client
+        .from("site_settings")
+        .select("key,value")
+        .like("key", "image:%");
+      if (error) {
+        setLoadError(error.message);
+        return;
+      }
+      const next: PathMap = {};
+      for (const row of data ?? []) {
+        const key = String(row.key);
+        const val = String(row.value ?? "");
+        if (key.startsWith("image:") && val) next[key.slice(6)] = val;
+      }
+      setPaths(next);
+      setLoadError("");
+    } catch (err) {
+      setLoadError(
+        err instanceof Error ? err.message : "Could not reach Supabase.",
+      );
+    } finally {
+      setLoading(false);
     }
-    setPaths(next);
-    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -59,6 +72,13 @@ export function ImageManager() {
 
   return (
     <div className="space-y-10">
+      {loadError && (
+        <div className="rounded-note border border-clay/40 bg-clayWash/50 p-4 font-body text-sm text-clayDeep">
+          Couldn&apos;t load saved images: {loadError}. Check your Supabase keys
+          and that <code className="font-mono text-xs">SETUP.sql</code> has been
+          run.
+        </div>
+      )}
       {Object.entries(groups).map(([group, groupSlots]) => (
         <div key={group}>
           <h3 className="mb-4 font-body text-xs font-semibold uppercase tracking-label text-muted">
@@ -113,43 +133,54 @@ function SlotCard({
     const ext = (file.name.split(".").pop() || "png").toLowerCase();
     const objectPath = `${slot.key}/${Date.now()}.${ext}`;
 
-    const up = await client.storage
-      .from(MEDIA_BUCKET)
-      .upload(objectPath, file, { cacheControl: "3600", upsert: true });
-    if (up.error) {
-      setError(up.error.message);
-      setBusy(false);
-      return;
-    }
+    try {
+      const up = await client.storage
+        .from(MEDIA_BUCKET)
+        .upload(objectPath, file, { cacheControl: "3600", upsert: true });
+      if (up.error) {
+        setError(up.error.message);
+        return;
+      }
 
-    const save = await client
-      .from("site_settings")
-      .upsert(
-        { key: settingKey(slot.key), value: objectPath },
-        { onConflict: "key" },
-      );
-    if (save.error) {
-      setError(save.error.message);
-      setBusy(false);
-      return;
-    }
+      const save = await client
+        .from("site_settings")
+        .upsert(
+          { key: settingKey(slot.key), value: objectPath },
+          { onConflict: "key" },
+        );
+      if (save.error) {
+        setError(save.error.message);
+        return;
+      }
 
-    // Remove the previous object if it was different.
-    if (path && path !== objectPath) {
-      await client.storage.from(MEDIA_BUCKET).remove([path]);
+      // Remove the previous object if it was different.
+      if (path && path !== objectPath) {
+        await client.storage.from(MEDIA_BUCKET).remove([path]);
+      }
+      await onChange();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed.");
+    } finally {
+      setBusy(false);
     }
-    await onChange();
-    setBusy(false);
   }
 
   async function handleDelete() {
     const client = getClient();
     if (!client || !path) return;
     setBusy(true);
-    await client.storage.from(MEDIA_BUCKET).remove([path]);
-    await client.from("site_settings").delete().eq("key", settingKey(slot.key));
-    await onChange();
-    setBusy(false);
+    try {
+      await client.storage.from(MEDIA_BUCKET).remove([path]);
+      await client
+        .from("site_settings")
+        .delete()
+        .eq("key", settingKey(slot.key));
+      await onChange();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Delete failed.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

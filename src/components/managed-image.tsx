@@ -50,7 +50,7 @@ export function ManagedImage({
 
 function Placeholder({ label, ready }: { label: string; ready: boolean }) {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[radial-gradient(circle_at_30%_20%,#F0DBCE_0%,#EFE7D8_60%)] px-6 text-center">
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[radial-gradient(circle_at_30%_20%,#EAF3EF_0%,#EDF1F5_60%)] px-6 text-center">
       <span className="text-[0.62rem] font-body uppercase tracking-label text-clayDeep/70">
         {ready ? "Image slot" : "Loading"}
       </span>
