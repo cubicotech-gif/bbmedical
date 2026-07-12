@@ -40,25 +40,27 @@ export function AssetProvider({ children }: { children: ReactNode }) {
         setReady(true);
         return;
       }
-      const { data, error } = await client
-        .from("site_settings")
-        .select("key,value")
-        .like("key", "image:%");
-      if (error) {
+      try {
+        const { data, error } = await client
+          .from("site_settings")
+          .select("key,value")
+          .like("key", "image:%");
+        if (error) return;
+        const next: AssetMap = {};
+        for (const row of data ?? []) {
+          const key = String(row.key);
+          const path = String(row.value ?? "");
+          if (!key.startsWith("image:") || !path) continue;
+          const slot = key.slice("image:".length);
+          const url = publicAssetUrl(path);
+          if (url) next[slot] = url;
+        }
+        setUrls(next);
+      } catch {
+        // network / config error — leave placeholders, don't hang
+      } finally {
         setReady(true);
-        return;
       }
-      const next: AssetMap = {};
-      for (const row of data ?? []) {
-        const key = String(row.key);
-        const path = String(row.value ?? "");
-        if (!key.startsWith("image:") || !path) continue;
-        const slot = key.slice("image:".length);
-        const url = publicAssetUrl(path);
-        if (url) next[slot] = url;
-      }
-      setUrls(next);
-      setReady(true);
     },
     [],
   );

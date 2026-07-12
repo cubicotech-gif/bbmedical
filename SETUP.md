@@ -57,7 +57,7 @@ builds as **Static** — confirm in the build log that all routes show `○`.
 
 Open **`https://your-domain.com/console`** and enter the passphrase you set in
 `NEXT_PUBLIC_CONSOLE_KEY`. Use the **Images** tab to upload each slot. Empty
-slots show a warm placeholder until filled.
+slots show a neutral placeholder until filled.
 
 ### Image slots & recommended sizes
 

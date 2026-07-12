@@ -112,11 +112,13 @@ function TabButton({
 function Gate({ onUnlock }: { onUnlock: () => void }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
+  const expected = process.env.NEXT_PUBLIC_CONSOLE_KEY;
+  const keyMissing = !expected;
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    const expected = process.env.NEXT_PUBLIC_CONSOLE_KEY;
-    if (expected && value === expected) {
+    if (keyMissing) return;
+    if (value.trim() === expected) {
       onUnlock();
     } else {
       setError(true);
@@ -136,29 +138,43 @@ function Gate({ onUnlock }: { onUnlock: () => void }) {
         <p className="mt-1.5 font-body text-sm text-inkSoft">
           Enter the passphrase to manage images and submissions.
         </p>
-        <div className="mt-6">
-          <label htmlFor="key" className="field-label">
-            Passphrase
-          </label>
-          <input
-            id="key"
-            type="password"
-            autoFocus
-            value={value}
-            onChange={(e) => {
-              setValue(e.target.value);
-              setError(false);
-            }}
-            className="field-input"
-            placeholder="••••••••••"
-          />
-          {error && (
-            <p className="mt-2 font-body text-sm text-clayDeep">
-              That passphrase didn't match.
-            </p>
-          )}
-        </div>
-        <button type="submit" className="btn-clay mt-5 w-full">
+
+        {keyMissing ? (
+          <div className="mt-6 rounded-note border border-clay/40 bg-clayWash/50 p-4 font-body text-sm text-clayDeep">
+            No console passphrase is set. Add{" "}
+            <code className="font-mono text-xs">NEXT_PUBLIC_CONSOLE_KEY</code> to
+            your environment (and redeploy) to enable the console.
+          </div>
+        ) : (
+          <div className="mt-6">
+            <label htmlFor="key" className="field-label">
+              Passphrase
+            </label>
+            <input
+              id="key"
+              type="password"
+              autoFocus
+              value={value}
+              onChange={(e) => {
+                setValue(e.target.value);
+                setError(false);
+              }}
+              className="field-input"
+              placeholder="••••••••••"
+            />
+            {error && (
+              <p className="mt-2 font-body text-sm text-clayDeep">
+                That passphrase didn&apos;t match.
+              </p>
+            )}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={keyMissing}
+          className="btn-clay mt-5 w-full disabled:opacity-50"
+        >
           Unlock
         </button>
       </form>
