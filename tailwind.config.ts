@@ -5,7 +5,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Clean-White system — cool near-white base, emerald signature accent,
+        // Clean-White system — cool near-white base, red signature accent,
         // slate secondary, ink text. (Token names kept stable across the app.)
         paper: "#F6F8FA", // page background
         paperDeep: "#EDF1F5", // alternating section background
@@ -14,9 +14,9 @@ const config: Config = {
         inkSoft: "#3D434E",
         muted: "#6B7280",
         line: "#E4E8EE",
-        clay: "#157F5B", // signature accent (emerald)
-        clayDeep: "#0E5C42",
-        clayWash: "#E4F2EB",
+        clay: "#CB3A34", // signature accent (red)
+        clayDeep: "#A02821",
+        clayWash: "#F9E4E1",
         sage: "#475569", // secondary (slate)
         sageWash: "#EDF1F6",
       },
