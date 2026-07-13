@@ -41,6 +41,13 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    // Convenience aliases for the admin console (canonical path is /console).
+    return [
+      { source: "/admin", destination: "/console", permanent: false },
+      { source: "/manage", destination: "/console", permanent: false },
+    ];
+  },
 };
 
 export default nextConfig;
